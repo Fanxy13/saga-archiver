@@ -43,8 +43,6 @@ nach einem Namen für die Zielordner gefragt; angelegt werden dann `<Name>_1080p
 | Datei | Zweck |
 | --- | --- |
 | `aot_saga_export_simple.py` | Hauptskript, wird vom Launcher gestartet |
-| `aot_saga_export.py` | Variante mit Attack-on-Titan-Voreinstellung |
-| `aot_saga_export_backup.py` | Ältere Sicherungskopie |
 | `saga_archiver.command` | Launcher für macOS inkl. Abhängigkeitsprüfung |
 | `saga.spec` | PyInstaller-Konfiguration für ein Standalone-Binary |
 
