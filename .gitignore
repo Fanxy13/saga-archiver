@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+
+# Mitgelieferte Binaries (werden vom Launcher automatisch geholt)
+ffmpeg
+ffprobe
+yt-dlp
+youtube-dl
+
+# Download- und Export-Ordner
+*_1080p/
+*_PSP/
+
+# Sonstiges
+To
