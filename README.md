@@ -12,6 +12,21 @@ oder von YouTube herunterlädt und sie anschließend in ein PSP-taugliches Forma
 - Konvertierung nach PSP-Spezifikation: 480×272, H.264 Baseline Level 3.0, AAC 128 kbit/s, faststart
 - Überspringt bereits vorhandene Dateien, sodass Abbrüche fortgesetzt werden können
 
+## Download (fertiges Programm)
+
+Unter [Releases](https://github.com/Fanxy13/saga-archiver/releases) gibt es ein
+eigenständiges Binary für **macOS auf Apple Silicon**. Python und ffmpeg sind
+darin enthalten — es muss nichts installiert werden.
+
+```bash
+cd ~/Downloads/saga-archiver-v1.0-macos-arm64
+xattr -dr com.apple.quarantine saga
+./saga
+```
+
+Der `xattr`-Schritt ist einmalig nötig, weil das Binary nicht bei Apple
+notarisiert ist; ohne ihn verweigert macOS den Start.
+
 ## Voraussetzungen
 
 - macOS
@@ -44,7 +59,19 @@ nach einem Namen für die Zielordner gefragt; angelegt werden dann `<Name>_1080p
 | --- | --- |
 | `aot_saga_export_simple.py` | Hauptskript, wird vom Launcher gestartet |
 | `saga_archiver.command` | Launcher für macOS inkl. Abhängigkeitsprüfung |
-| `saga.spec` | PyInstaller-Konfiguration für ein Standalone-Binary |
+| `build.sh` | Baut das eigenständige Binary nach `dist/saga` |
+| `saga.spec` | PyInstaller-Konfiguration für das Standalone-Binary |
+
+## Selbst bauen
+
+```bash
+./build.sh
+```
+
+Das Skript lädt statische arm64-Builds von ffmpeg und ffprobe nach `vendor/`,
+richtet eine Build-Umgebung ein und erzeugt `dist/saga`. Das eingebettete
+ffmpeg stammt von [ffmpeg-static](https://github.com/eugeneware/ffmpeg-static)
+und steht wegen libx264 unter GPL v2+.
 
 ## Auf die PSP übertragen
 

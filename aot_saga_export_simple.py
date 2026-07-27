@@ -17,6 +17,27 @@ from urllib.parse import urljoin
 import subprocess
 
 
+def app_dir():
+    """Verzeichnis, neben dem die Ausgabeordner angelegt werden."""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def find_tool(name):
+    """Mitgeliefertes Binary bevorzugen, sonst im PATH suchen."""
+    for base in (getattr(sys, "_MEIPASS", None), app_dir()):
+        if base:
+            candidate = os.path.join(base, name)
+            if os.path.exists(candidate):
+                return candidate
+    return shutil.which(name) or name
+
+
+FFMPEG = find_tool("ffmpeg")
+FFPROBE = find_tool("ffprobe")
+
+
 def format_bytes(size):
     """Return human-readable file size."""
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
@@ -30,7 +51,7 @@ def get_video_duration(path):
     """Return video duration in seconds using ffprobe."""
     try:
         result = subprocess.run(
-            ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path],
+            [FFPROBE, "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
@@ -72,6 +93,11 @@ def main():
     parser.add_argument("--url", "-u", dest="url", default=None,
                         help="Internet Archive directory URL (z.B. https://archive.org/download/shingeki-no-kyojin_aot/season-1_DUB-1080p/)")
     args = parser.parse_args()
+
+    # Als gebautes Binary kann das Arbeitsverzeichnis beliebig sein (z.B. beim
+    # Doppelklick). Ausgaben sollen berechenbar neben der Anwendung landen.
+    if getattr(sys, "frozen", False):
+        os.chdir(app_dir())
 
     print_epic_banner()
 
@@ -290,7 +316,7 @@ def main():
                 print(f"Converting to PSP format (480x272)...")
                 duration = get_video_duration(orig_path)
                 cmd = [
-                    "./ffmpeg", "-i", orig_path,
+                    FFMPEG, "-i", orig_path,
                     "-vf", f"scale={PSP_WIDTH}:{PSP_HEIGHT}:force_original_aspect_ratio=decrease,"
                            f"pad={PSP_WIDTH}:{PSP_HEIGHT}:(ow-iw)/2:(oh-ih)/2",
                     "-c:v", "libx264",

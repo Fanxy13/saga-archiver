@@ -10,6 +10,8 @@ venv/
 # PyInstaller
 build/
 dist/
+.buildenv/
+vendor/
 
 # Mitgelieferte Binaries (werden vom Launcher automatisch geholt)
 ffmpeg
