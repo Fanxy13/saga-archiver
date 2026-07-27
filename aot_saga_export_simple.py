@@ -18,14 +18,14 @@ import subprocess
 
 
 def app_dir():
-    """Verzeichnis, neben dem die Ausgabeordner angelegt werden."""
+    """Directory the output folders are created next to."""
     if getattr(sys, "frozen", False):
         return os.path.dirname(sys.executable)
     return os.path.dirname(os.path.abspath(__file__))
 
 
 def find_tool(name):
-    """Mitgeliefertes Binary bevorzugen, sonst im PATH suchen."""
+    """Prefer a bundled binary, fall back to the PATH."""
     for base in (getattr(sys, "_MEIPASS", None), app_dir()):
         if base:
             candidate = os.path.join(base, name)
@@ -91,11 +91,11 @@ def print_epic_banner():
 def main():
     parser = argparse.ArgumentParser(description=" SAGA ARCHIVER (PSP COMPATIBLE)")
     parser.add_argument("--url", "-u", dest="url", default=None,
-                        help="Internet Archive directory URL (z.B. https://archive.org/download/shingeki-no-kyojin_aot/season-1_DUB-1080p/)")
+                        help="Internet Archive directory URL (e.g. https://archive.org/download/shingeki-no-kyojin_aot/season-1_DUB-1080p/)")
     args = parser.parse_args()
 
-    # Als gebautes Binary kann das Arbeitsverzeichnis beliebig sein (z.B. beim
-    # Doppelklick). Ausgaben sollen berechenbar neben der Anwendung landen.
+    # As a built binary the working directory can be anything (e.g. when
+    # double-clicked). Keep output predictable, next to the application.
     if getattr(sys, "frozen", False):
         os.chdir(app_dir())
 
@@ -119,7 +119,7 @@ def main():
         else:
             custom_name = ""
             while not custom_name:
-                custom_name = input("Neuer URL erkannt. Bitte Name des Zielordners eingeben: ").strip()
+                custom_name = input("New URL detected. Please enter a name for the target folder: ").strip()
         download_folder = f"{custom_name}_1080p"
         psp_folder = f"{custom_name}_PSP"
 
@@ -129,9 +129,9 @@ def main():
     context = ssl._create_unverified_context()
     is_youtube = "youtube.com/watch" in dir_url or "youtu.be/" in dir_url
     if is_youtube:
-        print(f"YouTube URL erkannt, lade von: {dir_url}")
+        print(f"YouTube URL detected, downloading from: {dir_url}")
 
-        # Prüfe zuerst lokales Binary, dann im PATH
+        # Check for a local binary first, then the PATH
         yt_binary_path = os.path.join(os.getcwd(), "yt-dlp")
         if os.path.exists(yt_binary_path):
             ytdl_bin = yt_binary_path
@@ -139,7 +139,7 @@ def main():
             ytdl_bin = shutil.which("yt-dlp") or shutil.which("youtube-dl")
         
         if not ytdl_bin:
-            print("yt-dlp oder youtube-dl wurde nicht gefunden. Lade yt-dlp Binary herunter...")
+            print("Neither yt-dlp nor youtube-dl was found. Downloading the yt-dlp binary...")
             import platform
             machine = platform.machine().lower()
             if machine == "x86_64":
@@ -150,7 +150,7 @@ def main():
                 yt_url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
 
             yt_binary_path = os.path.join(os.getcwd(), "yt-dlp")
-            print(f"Lade yt-dlp von {yt_url}...")
+            print(f"Downloading yt-dlp from {yt_url}...")
             try:
                 context = ssl._create_unverified_context()
                 with urllib.request.urlopen(yt_url, timeout=30, context=context) as response, open(yt_binary_path, 'wb') as out_file:
@@ -165,13 +165,13 @@ def main():
                         if total_size:
                             percent = int(100 * downloaded / total_size)
                             print(f"\rDownload: {percent}%", end='', flush=True)
-                    print(" - Fertig!")
+                    print(" - Done!")
                 os.chmod(yt_binary_path, 0o755)
                 ytdl_bin = yt_binary_path
-                print("yt-dlp Binary erfolgreich installiert!")
+                print("yt-dlp binary installed successfully!")
             except Exception as e:
-                print(f"Fehler beim Download: {e}")
-                print("Bitte installieren Sie yt-dlp manuell: brew install yt-dlp")
+                print(f"Download failed: {e}")
+                print("Please install yt-dlp manually: brew install yt-dlp")
                 sys.exit(1)
 
         yt_output_template = os.path.join(download_folder, "%(title).100s.%(ext)s")
@@ -187,12 +187,12 @@ def main():
         try:
             subprocess.run(ytdl_cmd, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Fehler beim Download von YouTube: {e}")
+            print(f"YouTube download failed: {e}")
             sys.exit(1)
 
         video_files = [f for f in os.listdir(download_folder) if f.lower().endswith(".mp4")]
         if not video_files:
-            print("Keine MP4-Dateien im Download-Ordner gefunden.")
+            print("No MP4 files found in the download folder.")
             sys.exit(1)
 
         video_files = sorted(set(video_files))
@@ -200,9 +200,9 @@ def main():
     else:
         print(f"Fetching episode list from Internet Archive: {dir_url}")
 
-        # SSL Fix für macOS Certificate Error - Temporär Verifikation deaktiviert
+        # SSL fix for the macOS certificate error - verification disabled for now
         try:
-            # Temporärer Fix: SSL-Verifikation deaktivieren wegen Certificate Chain Problem
+            # Temporary fix: disable SSL verification due to a certificate chain problem
             context = ssl._create_unverified_context()
             with urllib.request.urlopen(dir_url, context=context) as resp:
                 html = resp.read().decode("utf-8")
@@ -265,7 +265,7 @@ def main():
         psp_path = os.path.join(psp_folder, psp_filename)
 
         if is_youtube:
-            print(f"[{i:02d}/{len(video_files)}] YouTube-Video erkannt und bereits heruntergeladen: {filename}")
+            print(f"[{i:02d}/{len(video_files)}] YouTube video detected and already downloaded: {filename}")
         else:
             if not os.path.exists(orig_path) or redownload_all:
                 print(f"[{i:02d}/{len(video_files)}] Downloading → {filename}")

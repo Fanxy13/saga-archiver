@@ -13,15 +13,15 @@ dist/
 .buildenv/
 vendor/
 
-# Mitgelieferte Binaries (werden vom Launcher automatisch geholt)
+# Bundled binaries (fetched automatically by the launcher)
 ffmpeg
 ffprobe
 yt-dlp
 youtube-dl
 
-# Download- und Export-Ordner
+# Download and export folders
 *_1080p/
 *_PSP/
 
-# Sonstiges
+# Misc
 To

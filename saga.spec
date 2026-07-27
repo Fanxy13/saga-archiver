@@ -1,10 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller-Konfiguration für ein eigenständiges SAGA-ARCHIVER-Binary.
+PyInstaller configuration for a standalone SAGA ARCHIVER binary.
 
-ffmpeg und ffprobe werden mit eingebettet, damit das Ergebnis ohne jede
-Installation läuft. Erwartet werden statische Builds unter vendor/ (siehe
-build.sh). Bauen mit:  pyinstaller saga.spec
+ffmpeg and ffprobe are embedded so the result runs without any installation.
+Static builds are expected under vendor/ (see build.sh).
+Build with:  pyinstaller saga.spec
 """
 
 import os
@@ -14,13 +14,12 @@ HERE = os.path.abspath(SPECPATH)
 
 
 def vendored(name):
-    """Pfad zu einem einzubettenden Binary, vendor/ zuerst."""
+    """Path to a binary that should be embedded, vendor/ first."""
     for candidate in (os.path.join(HERE, "vendor", name), os.path.join(HERE, name)):
         if os.path.exists(candidate):
             return candidate
     raise SystemExit(
-        f"FEHLER: '{name}' nicht gefunden. Erwartet unter vendor/{name} — "
-        f"siehe build.sh."
+        f"ERROR: '{name}' not found. Expected at vendor/{name} — see build.sh."
     )
 
 

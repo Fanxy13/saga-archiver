@@ -1,22 +1,22 @@
 # SAGA ARCHIVER
 
-Ein Kommandozeilen-Tool für macOS, das Videos von einer Internet-Archive-Verzeichnisseite
-oder von YouTube herunterlädt und sie anschließend in ein PSP-taugliches Format
-(480×272, H.264 Baseline) konvertiert.
+A command-line tool for macOS that downloads videos from an Internet Archive
+directory page or from YouTube and converts them to a PSP-compatible format
+(480×272, H.264 Baseline).
 
 ## Features
 
-- Lädt alle `.mp4`-Dateien aus einem Internet-Archive-Verzeichnis herunter
-- Alternativ: Download einzelner YouTube-Videos via `yt-dlp` (wird bei Bedarf automatisch installiert)
-- Fortschrittsanzeige für Download und Konvertierung
-- Konvertierung nach PSP-Spezifikation: 480×272, H.264 Baseline Level 3.0, AAC 128 kbit/s, faststart
-- Überspringt bereits vorhandene Dateien, sodass Abbrüche fortgesetzt werden können
+- Downloads every `.mp4` file from an Internet Archive directory
+- Alternatively, downloads a single YouTube video via `yt-dlp` (installed automatically when needed)
+- Progress display for both downloading and converting
+- Converts to PSP specification: 480×272, H.264 Baseline Level 3.0, AAC 128 kbit/s, faststart
+- Skips files that already exist, so interrupted runs can be resumed
 
-## Download (fertiges Programm)
+## Download (ready-to-run build)
 
-Unter [Releases](https://github.com/Fanxy13/saga-archiver/releases) gibt es ein
-eigenständiges Binary für **macOS auf Apple Silicon**. Python und ffmpeg sind
-darin enthalten — es muss nichts installiert werden.
+The [Releases](https://github.com/Fanxy13/saga-archiver/releases) page has a
+standalone binary for **macOS on Apple Silicon**. Python and ffmpeg are included
+— nothing needs to be installed.
 
 ```bash
 cd ~/Downloads/saga-archiver-v1.0-macos-arm64
@@ -24,65 +24,65 @@ xattr -dr com.apple.quarantine saga
 ./saga
 ```
 
-Der `xattr`-Schritt ist einmalig nötig, weil das Binary nicht bei Apple
-notarisiert ist; ohne ihn verweigert macOS den Start.
+The `xattr` step is needed once because the binary is not notarized by Apple;
+without it macOS refuses to start the program.
 
-## Voraussetzungen
+## Requirements (running from source)
 
 - macOS
 - Python 3
 - ffmpeg / ffprobe
 
-Der Launcher prüft beides und installiert Fehlendes bei Bedarf über Homebrew.
+The launcher checks for both and installs whatever is missing via Homebrew.
 
-## Verwendung
+## Usage
 
-Der einfachste Weg — Doppelklick auf `saga_archiver.command`, oder im Terminal:
+The simplest way — double-click `saga_archiver.command`, or in a terminal:
 
 ```bash
 ./saga_archiver.command
 ```
 
-Direkt über Python:
+Directly via Python:
 
 ```bash
-python3 aot_saga_export_simple.py --url "https://archive.org/download/<item>/<verzeichnis>/"
+python3 aot_saga_export_simple.py --url "https://archive.org/download/<item>/<directory>/"
 ```
 
-Ohne `--url` fragt das Skript die Adresse interaktiv ab. Bei einer neuen URL wird
-nach einem Namen für die Zielordner gefragt; angelegt werden dann `<Name>_1080p`
-(Originaldateien) und `<Name>_PSP` (konvertierte Dateien).
+Without `--url` the script asks for the address interactively. For a new URL it
+also asks for a name for the target folders, then creates `<name>_1080p` (the
+original files) and `<name>_PSP` (the converted files).
 
-## Dateien
+## Files
 
-| Datei | Zweck |
+| File | Purpose |
 | --- | --- |
-| `aot_saga_export_simple.py` | Hauptskript, wird vom Launcher gestartet |
-| `saga_archiver.command` | Launcher für macOS inkl. Abhängigkeitsprüfung |
-| `build.sh` | Baut das eigenständige Binary nach `dist/saga` |
-| `saga.spec` | PyInstaller-Konfiguration für das Standalone-Binary |
+| `aot_saga_export_simple.py` | Main script, started by the launcher |
+| `saga_archiver.command` | macOS launcher including the dependency check |
+| `build.sh` | Builds the standalone binary into `dist/saga` |
+| `saga.spec` | PyInstaller configuration for the standalone binary |
 
-## Selbst bauen
+## Building it yourself
 
 ```bash
 ./build.sh
 ```
 
-Das Skript lädt statische arm64-Builds von ffmpeg und ffprobe nach `vendor/`,
-richtet eine Build-Umgebung ein und erzeugt `dist/saga`. Das eingebettete
-ffmpeg stammt von [ffmpeg-static](https://github.com/eugeneware/ffmpeg-static)
-und steht wegen libx264 unter GPL v2+.
+The script downloads static arm64 builds of ffmpeg and ffprobe into `vendor/`,
+sets up a build environment and produces `dist/saga`. The embedded ffmpeg comes
+from [ffmpeg-static](https://github.com/eugeneware/ffmpeg-static) and is GPL v2+
+because of libx264.
 
-## Auf die PSP übertragen
+## Copying to your PSP
 
-1. PSP per USB verbinden
-2. Dateien nach `/PSP/COMMON/` oder `/VIDEO/` kopieren
-3. Trennen und abspielen
+1. Connect the PSP over USB
+2. Copy the files to `/PSP/COMMON/` or `/VIDEO/`
+3. Disconnect and play
 
-## Hinweis
+## Note
 
-Das Tool lädt nur, was du ihm an URLs vorgibst. Achte darauf, dass du die Rechte
-an den Inhalten besitzt bzw. die Nutzungsbedingungen der jeweiligen Quelle einhältst.
+The tool only downloads what you point it at. Make sure you hold the rights to
+the content, or that you are complying with the terms of the source you use.
 
 ---
 
