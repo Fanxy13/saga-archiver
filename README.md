@@ -86,4 +86,4 @@ the content, or that you are complying with the terms of the source you use.
 
 ---
 
-Version 1.0 — by Gabriel
+Version 1.0 — by Gabriel (Vibecoded)
